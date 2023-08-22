@@ -1,67 +1,80 @@
-//function to get computer choice
-function getComputerChoice() {
+// Initialize player and computer scores
+let playerScore = 0;
+let computerScore = 0;
+
+//function to randomly choose computer's move
+function computerPlay() {
     const choices = ['rock', 'paper', 'scissors'];
-    const randomIndex = Math.floor(Math.random() * choices.length);
-    return choices[randomIndex];
+    return choices[Math.floor(Math.random() * choices.length)];
 }
 
-// function to play a single round of rock paper scissors
+// Function to play a round of the game
 function playRound(playerSelection, computerSelection) {
-    //convert playerSelection to lowercase for case-insensitivity
-    const playerChoice = playerSelection.toLowerCase();
-
-    //check for tie
-    if (playerChoice === computerSelection.toLowerCase()) {
-        return "Its a tie! Both chose " + playerSelection;
-    }
-
-    // check the possible win scenarios for the player
-    if (
-    (playerChoice === 'rock' && computerSelection.toLowerCase() === 'scissors') ||
-    (playerChoice === 'paper' && computerSelection.toLowerCase() === 'rock') ||
-    (playerSelection === 'scissors' && computerSelection.toLowerCase() === 'paper') 
+    if (playerSelection === computerSelection) {  
+        return "Its a tie!";
+    } else if (
+        (playerSelection === 'rock' && computerSelection === 'scissors') ||
+        (playerSelection === 'paper' && computerSelection === 'rock') ||
+        (playerSelection === 'scissors' && computerSelection === 'paper') 
     )  {
-    return "You win! " + playerSelection + " beats " + computerSelection;
-    }
-
-    //If none of the above conditions match, then the player loses
-    return "You Lose! " + computerSelection + " Beats " + playerSelection
-}
-
-//function to play 5-round of game and keep score
-function game() {
-    let playerScore = 0;
-    let computerScore = 0;
-
-
-    for (let i = 0; i < 5; i++) {
-        const playerSelection = prompt("Enter your choice (Rock, Paper, or Scissors):");
-        const computerSelection = getComputerChoice();
-
-        const result = playRound(playerSelection, computerSelection);
-        console.log(result);
-
-
-       //update score
-       if (result.startsWith("You Win!")) {
         playerScore++;
-       }  else if (result.startsWith("You Lose!")) {
-        computerScore++;
-       }
-    }  
-
-    //report the winner or loser at  the end of the game
-    if (playerScore > computerScore) {
-        console.log("congratulations! You win the game!");
-    } else if (playerScore < computerScore) {
-        console.log("sorry, You lose the game. Better luck next time!");
+        return "You win this round!";
     } else {
-        console.log(("Its a tie! The game ended in a draw."));
-    }    
+        computerScore++;
+        return "You lose this round!";
+    }
 }
 
-//start the game
-game();
+//Function to update player and computer scores
+function updateScores(){
+    document.getElementById('player-score').textContent = playerScore;
+    document.getElementById('computer-score').textContent = computerScore;
+}
+
+// Funtion to announce the winner of the game 
+function announceWinner() {
+    if (playerScore === 5) {
+        document.getElementById('game-result').textContent = "Congratulations! You win the game!";
+        disableButtons();
+    } else if (computerScore === 5) {
+        document.getElementById('game-result').textContent = "Sorry! Computer wins the game.";
+        disableButtons();
+    }
+}
+
+// Funtion to disable buttons and remove event listeners 
+function disableButtons(){
+    const buttons = document.querySelectorAll('.buttons button');
+    buttons.forEach(button => {
+        button.removeEventListener('click', handleButtonClick);
+        button.disabled = true;
+    });
+} 
+
+//Function to handle button clicks
+function handleButtonClick(e) {
+    const playerSelection = e.target.id;
+    const computerSelection = computerPlay();
+    const roundResult = playRound(playerSelection, computerSelection);
+
+    document.getElementById('round-result').textContent = roundResult;
+    updateScores();
+    announceWinner();
+}
+
+//Add event listeners to buttons
+const buttons = document.querySelectorAll('.buttons button');
+buttons.forEach(button => {
+    button.addEventListener('click', handleButtonClick);
+});
+
+
+
+
+
+    
+
+
 
 
 
